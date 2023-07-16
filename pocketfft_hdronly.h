@@ -150,15 +150,30 @@ template<> struct VLEN<double> { static constexpr size_t val=2; };
 #endif
 
 #if __cplusplus >= 201703L
+#ifdef _MSC_VER
 inline void *aligned_alloc(size_t align, size_t size)
   {
   // aligned_alloc() requires that the requested size is a multiple of "align"
-  void *ptr = ::aligned_alloc(align,(size+align-1)&(~(align-1)));
+  void *ptr = _aligned_malloc((size+align-1)&(~(align-1)), align);
   if (!ptr) throw std::bad_alloc();
   return ptr;
   }
 inline void aligned_dealloc(void *ptr)
-    { free(ptr); }
+    { _aligned_free(ptr); }
+#else
+inline void* aligned_alloc(size_t align, size_t size)
+{
+  // aligned_alloc() requires that the requested size is a multiple of "align"
+  void* ptr = ::aligned_alloc(align, (size + align - 1) & (~(align - 1)));
+  if (!ptr) throw std::bad_alloc();
+  return ptr;
+}
+inline void aligned_dealloc(void* ptr)
+{
+  free(ptr);
+}
+
+#endif
 #else // portable emulation
 inline void *aligned_alloc(size_t align, size_t size)
   {
