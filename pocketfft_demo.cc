@@ -18,7 +18,7 @@ inline double simple_drand()
 template<typename T> void crand(vector<complex<T>> &v)
   {
   for (auto & i:v)
-    i = complex<T>(simple_drand()-0.5, simple_drand()-0.5);
+    i = complex<T>( T(simple_drand()-0.5), T(simple_drand()-0.5));
   }
 
 template<typename T1, typename T2> long double l2err
@@ -46,7 +46,7 @@ int main()
     size_t tmpf=sizeof(complex<float>),
            tmpd=sizeof(complex<double>),
            tmpl=sizeof(complex<long double>);
-    for (int i=shape.size()-1; i>=0; --i)
+    for (int i=int(shape.size())-1; i>=0; --i)
       {
       stridef[i]=tmpf;
       tmpf*=shape[i];
